@@ -1,0 +1,25 @@
+{
+  "name": "ng-cla-check",
+  "version": "0.0.1",
+  "description": "A simple utility to check if an AngularJS PR has the `cla: yes` label.",
+  "keywords": [
+    "Utility",
+    "AngularJS"
+  ],
+
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "ng-cla-check": "index.js"
+  },
+
+  "license": "Unlicense",
+  "author": "ExpertSystem <expertsystem.dev@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://bitbucket.org/ExpertSystem_dev/ng-cla-check.git"
+  },
+  "homepage": "https://bitbucket.org/ExpertSystem_dev/ng-cla-check#readme"
+}
