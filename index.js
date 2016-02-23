@@ -19,16 +19,14 @@ function _main(args) {
 
   getInfo(prNo).
     then(checkLabels).
-    catch(e => {
-      if (e) console.error(e);
-      process.exit(1);
-    });
+    catch(onError).
+    then(reportAndExit);
 }
 
 function checkLabels(json) {
   const promise = new Promise((resolve, reject) => {
     const labels = JSON.parse(json).labels;
-    const claOk = labels.some(label => label.name === CLA_LABEL);
+    const claOk = labels && labels.some(label => label.name === CLA_LABEL);
 
     (claOk ? resolve : reject)();
   });
@@ -59,4 +57,20 @@ function getInfo(prNo) {
   });
 
   return promise;
+}
+
+function onError(err) {
+  if (err) console.error('ERROR:', err);
+
+  return true;
+}
+
+function reportAndExit(withError) {
+  const exitCode = withError ? 1 : 0;
+  const message = withError ?
+      ':(  Unable to verify the CLA signature !' :
+      ':)  CLA signature verified successfully !';
+
+  console.log(message);
+  process.exit(exitCode);
 }
