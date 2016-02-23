@@ -17,9 +17,9 @@
 
   "license": "Unlicense",
   "author": "ExpertSystem <expertsystem.dev@gmail.com>",
+  "homepage": "https://bitbucket.org/ExpertSystem_dev/ng-cla-check#readme",
   "repository": {
     "type": "git",
     "url": "git+https://bitbucket.org/ExpertSystem_dev/ng-cla-check.git"
-  },
-  "homepage": "https://bitbucket.org/ExpertSystem_dev/ng-cla-check#readme"
+  }
 }
