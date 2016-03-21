@@ -8,6 +8,7 @@ const https = require('https');
 // Constants
 const GH_HOST = 'api.github.com';
 const GH_PATH = '/repos/angular/angular.js/issues/';
+const GH_TOKEN = process.env.GITHUB_ACCESS_TOKEN;
 const CLA_LABEL = 'cla: yes';
 
 // Run
@@ -41,8 +42,9 @@ function getInfo(prNo) {
     const options = {
       method: 'GET',
       hostname: GH_HOST,
-      path: GH_PATH + prNo,
+      path: `${GH_PATH}${prNo}`,
       headers: {
+        'Authorization': `token ${GH_TOKEN}`,
         'User-Agent': 'Node'
       }
     };
