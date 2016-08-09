@@ -1,6 +1,6 @@
 {
   "name": "ng-cla-check",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A simple utility to check if an AngularJS PR has the `cla: yes` label.",
   "keywords": [
     "Utility",
