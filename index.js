@@ -34,7 +34,7 @@ function displayUsage(config) {
 }
 
 function getAndValidateInput(args, config) {
-  args = minimist(args);
+  args = removeSurroundingQuotes(minimist(args));
   if (args.usage) return {usage: true};
 
   let ghToken = process.env[config.ghTokenVar] || null;
@@ -53,6 +53,20 @@ function onError(err) {
 
 function onSuccess() {
   reportAndExit(0);
+}
+
+function removeSurroundingQuotes(args) {
+  Object.keys(args).forEach(key => {
+    let value = args[key];
+
+    if (typeof value === 'string') {
+      args[key] = value.
+        replace(/^"([^"]*)"$/, '$1').
+        replace(/^'([^']*)'$/, '$1');
+    }
+  });
+
+  return args;
 }
 
 function reportAndExit(exitCode) {
