@@ -1,50 +1,65 @@
+#!/usr/bin/env node
 'use strict';
 
-// Constants
-const GH_HOST = 'api.github.com';
-const GH_PATH = '/repos/angular/angular.js/issues/';
-const GH_TOKEN = process.env.GITHUB_ACCESS_TOKEN;
-const CLA_LABEL = 'cla: yes';
-
 // Imports
-let https = require('https');
+let minimist = require('minimist');
 
-// Exports
-module.exports = ngClaCheck;
+// Imports - Local
+let Checker = require('./lib/checker');
+let Config = require('./lib/config');
+
+// Run
+_main(process.argv.slice(2));
 
 // Functions - Definitions
-function checkLabels(json) {
-  return new Promise((resolve, reject) => {
-    let labels = JSON.parse(json).labels;
-    let claOk = labels && labels.some(label => label.name === CLA_LABEL);
+function _main(args) {
+  let config = new Config();
+  let input = getAndValidateInput(args, config);
 
-    (claOk ? resolve : reject)();
+  if (input.usage) return displayUsage(config);
+
+  let checker = new Checker({
+    ghToken: input.ghToken,
+    claLabel: input.claLabel,
+    repo: input.repo
   });
+
+  checker.
+    check(input.prNo).
+    then(onSuccess, onError);
 }
 
-function ngClaCheck(prNo) {
-  return requestData(prNo).then(checkLabels);
+function displayUsage(config) {
+  console.log(`\n ${config.usageMessage}`);
 }
 
-function requestData(prNo) {
-  return new Promise((resolve, reject) => {
-    let data = '';
-    let options = {
-      method: 'GET',
-      hostname: GH_HOST,
-      path: `${GH_PATH}${prNo}`,
-      headers: {
-        'Authorization': `token ${GH_TOKEN}`,
-        'User-Agent': 'Node'
-      }
-    };
+function getAndValidateInput(args, config) {
+  args = minimist(args);
+  if (args.usage) return {usage: true};
 
-    let req = https.request(options, res => {
-      res.on('data', d => data += d);
-      res.on('end', () => resolve(data));
-    });
+  let ghToken = process.env[config.ghTokenVar] || null;
+  let claLabel = args.claLabel || config.defaults.claLabel;
+  let repo = args.repo || config.defaults.repo;
+  let prNo = args._[0] || onError(`No PR specified\n\n${config.usageMessage}`);
 
-    req.end();
-    req.on('error', reject);
-  });
+  return {ghToken, claLabel, repo, prNo};
+}
+
+function onError(err) {
+  if (err) console.error(`\n  ERROR: ${err}\n`);
+
+  reportAndExit(1);
+}
+
+function onSuccess() {
+  reportAndExit(0);
+}
+
+function reportAndExit(exitCode) {
+  let message = exitCode ?
+      ':(  Unable to verify the CLA signature!' :
+      ':)  CLA signature verified successfully!';
+
+  console.log(message);
+  process.exit(exitCode || 0);
 }

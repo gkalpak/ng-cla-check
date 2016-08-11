@@ -1,8 +1,13 @@
 {
   "env": {
+    "es6": true,
     "node": true
   },
-  "parserOptions": {
-    "ecmaVersion": 6
+  "extends": "eslint:recommended",
+  "rules": {
+    "indent": [2, 2],
+    "no-console": 0,
+    "quotes": [2, "single"],
+    "semi": [2, "always"]
   }
 }
