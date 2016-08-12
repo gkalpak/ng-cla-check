@@ -37,11 +37,11 @@ function getAndValidateInput(args, config) {
   if (args.usage) return {usage: true};
 
   let ghToken = process.env[config.ghTokenVar] || null;
-  let claLabel = args.claLabel || config.defaults.claLabel;
-  let repo = args.repo || config.defaults.repo;
+  let claLabel = args.claLabel || null;
+  let repo = args.repo || null;
   let prNo = args._[0];
 
-  if (repo.indexOf('/') === -1) {
+  if (repo && (repo.indexOf('/') === -1)) {
     onError(`Invalid repo. Make sure to include the username (e.g. '${config.defaults.repo}').`);
   }
   if (!prNo) {
