@@ -40,7 +40,14 @@ function getAndValidateInput(args, config) {
   let ghToken = process.env[config.ghTokenVar] || null;
   let claLabel = args.claLabel || config.defaults.claLabel;
   let repo = args.repo || config.defaults.repo;
-  let prNo = args._[0] || onError(`No PR specified\n\n${config.usageMessage}`);
+  let prNo = args._[0];
+
+  if (repo.indexOf('/') === -1) {
+    onError(`Invalid repo. Make sure to include the username (e.g. '${config.defaults.repo}').`);
+  }
+  if (!prNo) {
+    onError(`No PR specified\n\n${config.usageMessage}`);
+  }
 
   return {ghToken, claLabel, repo, prNo};
 }
