@@ -6,14 +6,13 @@ let minimist = require('minimist');
 
 // Imports - Local
 let Checker = require('./lib/checker');
-let Config = require('./lib/config');
+let config = require('./lib/config');
 
 // Run
 _main(process.argv.slice(2));
 
 // Functions - Definitions
 function _main(args) {
-  let config = new Config();
   let input = getAndValidateInput(args, config);
 
   if (input.usage) return displayUsage(config);
