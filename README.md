@@ -31,11 +31,7 @@ ng-cla-check 12345 --repo="some-user/some-repo" --claLabel="some text"
 
 ```js
 let Checker = require('ng-cla-check');
-let checker = new Checker({
-  ghToken: '...',   // If omitted, requests to the GitHub API will be rate limited.
-  claLabel: '...',
-  repo: '...'
-}, quit);   // Pass true, to avoid any logging to the console.
+let checker = new Checker(/* Use defaults options */);
 
 checker.check(prNo).then(
     () => { /* CLA verified successfully. */ },
@@ -47,4 +43,14 @@ checker.check(prNo).then(
         /* ...because it was probably not signed. */
       }
     });
+```
+
+You can also pass custom `ghToken`, `claLabel` or `repo` options:
+
+```js
+let checker = new Checker({
+  ghToken: '...',   // Pass `false` to force anonymous (rate-limited) requests to the GitHub API.
+  claLabel: 'some text',
+  repo: 'some-user/some-repo'
+});
 ```
