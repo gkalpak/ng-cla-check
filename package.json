@@ -9,7 +9,8 @@
   "main": "lib/checker",
   "scripts": {
     "start": "node index",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node scripts/run-tests",
+    "test-watch": "node scripts/run-tests --watch"
   },
   "bin": {
     "ng-cla-check": "index.js"
@@ -23,5 +24,8 @@
   },
   "dependencies": {
     "minimist": "^1.2.0"
+  },
+  "devDependencies": {
+    "jasmine": "^2.4.1"
   }
 }
