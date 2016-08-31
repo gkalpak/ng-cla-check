@@ -70,6 +70,8 @@ function runTestsOnce(keepRunning) {
   let args = [path.join(__dirname, '_run-tests-once')];
   let proc = spawn(executable, args, {stdio: 'inherit'});
 
+  console.log('-'.repeat(50));
+
   proc.on('exit', (code, signal) => {
     if (keepRunning) {
       console.log();
