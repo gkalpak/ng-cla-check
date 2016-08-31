@@ -8,6 +8,7 @@
   ],
   "main": "lib/checker",
   "scripts": {
+    "prepublish": "npm test",
     "start": "node index",
     "test": "node scripts/run-tests",
     "test-watch": "node scripts/run-tests --watch"
