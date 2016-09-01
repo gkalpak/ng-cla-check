@@ -14,8 +14,12 @@ _main(process.argv.slice(2));
 
 // Functions - Definitions
 function _main(args) {
-  let watch = minimist(args).watch;
-  runTests(watch);
+  args = minimist(args);
+
+  let testType = getTestType(args);
+  let watch = args.watch;
+
+  runTests(testType, watch);
 }
 
 function debounce(fn, delay) {
@@ -41,11 +45,23 @@ function debounce(fn, delay) {
   }
 }
 
+function getTestType(args) {
+  let candidateTestTypes = ['unit', 'e2e'];
+  let requestedTestTypes = candidateTestTypes.filter(type => args[type]);
+
+  if (requestedTestTypes.length !== 1) {
+    console.error(`You must specify exactly ONE test-type, not ${requestedTestTypes.length}!`);
+    process.exit(1);
+  }
+
+  return requestedTestTypes[0];
+}
+
 function ignoreFile(filename) {
   return filename.indexOf('node_modules' + path.sep) === 0;
 }
 
-function runTests(watch) {
+function runTests(testType, watch) {
   let watcher = null;
 
   if (watch) {
@@ -55,19 +71,19 @@ function runTests(watch) {
 
     watcher = fs.watch(rootDir, config, (_, filename) => {
       if (!ignoreFile(filename)) {
-        debouncedRunTestsOnce(true);
+        debouncedRunTestsOnce(testType, true);
       }
     });
   }
 
-  runTestsOnce(watch);
+  runTestsOnce(testType, watch);
 
   return watcher;
 }
 
-function runTestsOnce(keepRunning) {
+function runTestsOnce(testType, keepRunning) {
   let executable = process.argv[0];
-  let args = [path.join(__dirname, '_run-tests-once')];
+  let args = [path.join(__dirname, '_run-tests-once'), `"${path.join('test', testType)}"`];
   let proc = spawn(executable, args, {stdio: 'inherit'});
 
   console.log('-'.repeat(50));

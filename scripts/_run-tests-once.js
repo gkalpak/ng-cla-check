@@ -7,7 +7,7 @@ let util = require('util');
 // Constants
 const JASMINE_CONFIG = {
   random: true,
-  spec_dir: 'test',
+  spec_dir: getSpecDir(),
   spec_files: [
     '**/*.spec.js'
   ]
@@ -37,4 +37,11 @@ function createConsoleReporter(runner) {
   };
 
   return new Jasmine.ConsoleReporter(options);
+}
+
+function getSpecDir() {
+  let value = process.argv[2] || '';
+  let match = /^"([^"]*)"$/.exec(value) || /^'([^']*)'$/.exec(value);
+
+  return !match ? value : match[1];
 }

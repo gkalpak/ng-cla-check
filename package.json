@@ -12,8 +12,10 @@
     "start": "node index",
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "node scripts/run-tests",
-    "test-watch": "node scripts/run-tests --watch"
+    "test": "npm run test-unit && npm run test-e2e",
+    "test-e2e": "node scripts/run-tests --e2e",
+    "test-unit": "node scripts/run-tests --unit",
+    "test-watch": "npm run test-unit -- --watch"
   },
   "bin": {
     "ng-cla-check": "index.js"
