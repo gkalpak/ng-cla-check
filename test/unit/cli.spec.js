@@ -206,6 +206,13 @@ describe('Cli', () => {
 
       expect(output).toEqual({foo: {bar: '"bar"'}, baz: ['"qux"']});
     });
+
+    it('should remove the outer-most pair of quotes only', () => {
+      let input = {foo: '"\'bar\'"', baz: '\'"qux"\''};
+      let output = cli._removeSurroundingQuotes(input);
+
+      expect(output).toEqual({foo: '\'bar\'', baz: '"qux"'});
+    });
   });
 
   describe('#_reportAndExit()', () => {
