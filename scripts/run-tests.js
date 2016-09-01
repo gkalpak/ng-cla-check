@@ -57,23 +57,15 @@ function getTestType(args) {
   return requestedTestTypes[0];
 }
 
-function ignoreFile(filename) {
-  return filename.indexOf('node_modules' + path.sep) === 0;
-}
-
 function runTests(testType, watch) {
   let watcher = null;
 
   if (watch) {
     let rootDir = path.join(__dirname, '..');
     let config = {persistent: true, recursive: true};
-    let debouncedRunTestsOnce = debounce(runTestsOnce, 1000);
+    let onChange = debounce(runTestsOnce, 1000).bind(null, testType, true);
 
-    watcher = fs.watch(rootDir, config, (_, filename) => {
-      if (!ignoreFile(filename)) {
-        debouncedRunTestsOnce(testType, true);
-      }
-    });
+    watcher = fs.watch(rootDir, config, onChange);
   }
 
   runTestsOnce(testType, watch);
