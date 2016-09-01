@@ -16,7 +16,7 @@ _main(process.argv.slice(2));
 function _main(args) {
   args = minimist(args);
 
-  let testType = getTestType(args);
+  let testType = args.type || '';
   let watch = args.watch;
 
   runTests(testType, watch);
@@ -43,18 +43,6 @@ function debounce(fn, delay) {
       fn.apply(context, args);
     }, delay);
   }
-}
-
-function getTestType(args) {
-  let candidateTestTypes = ['unit', 'e2e'];
-  let requestedTestTypes = candidateTestTypes.filter(type => args[type]);
-
-  if (requestedTestTypes.length !== 1) {
-    console.error(`You must specify exactly ONE test-type, not ${requestedTestTypes.length}!`);
-    process.exit(1);
-  }
-
-  return requestedTestTypes[0];
 }
 
 function runTests(testType, watch) {
