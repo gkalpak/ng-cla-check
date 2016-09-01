@@ -119,6 +119,23 @@ describe('Checker', () => {
       request.emit('error', 'Test');
     });
 
+    it('should reject the returned promise on response error', done => {
+      httpsGetSpy.and.callFake((_, cb) => {
+        let request = new PassThrough();
+        let response = new PassThrough();
+
+        cb(response);
+        response.emit('error', 'Test');
+
+        return request;
+      });
+
+      checker.check(12345).catch(err => {
+        expect(err).toBe('Test');
+        done();
+      });
+    });
+
     it('should request the specified PR\'s data', () => {
       checker.check(12345);
 
