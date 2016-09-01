@@ -4,8 +4,8 @@
 let https = require('https');
 
 // Imports - Local
-let Checker = require('../lib/checker');
-let config = require('../lib/config');
+let Checker = require('../../lib/checker');
+let config = require('../../lib/config');
 
 // Tests
 describe('Checker', () => {

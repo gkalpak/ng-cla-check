@@ -1,7 +1,7 @@
 'use strict';
 
 // Imports - Local
-let config = require('../lib/config');
+let config = require('../../lib/config');
 
 // Tests
 describe('config', () => {

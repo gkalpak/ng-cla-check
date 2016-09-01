@@ -1,9 +1,9 @@
 'use strict';
 
 // Imports - Local
-let Checker = require('../lib/checker');
-let Cli = require('../lib/cli');
-let config = require('../lib/config');
+let Checker = require('../../lib/checker');
+let Cli = require('../../lib/cli');
+let config = require('../../lib/config');
 
 // Tests
 describe('Cli', () => {
