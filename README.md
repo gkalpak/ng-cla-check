@@ -64,3 +64,25 @@ GitHub access-token is available), by passing `true` as the second argument:
 let quiet = true;
 let checker = new Checker(null, quiet);
 ```
+
+## Testing
+
+The following test-types/modes are available:
+
+- **Code-linting:** `npm run lint`  
+  _Lint JavaScript files using ESLint._
+
+- **Unit tests:** `npm run test-unit`  
+  _Run all the unit tests once. These tests are quick and suitable to be run on every change._
+
+- **E2E tests:** `npm run test-e2e`  
+  _Run all the end-to-end tests once. These test hit actual API endpoints and are considerably slower
+  than unit tests._
+
+- **All tests:** `npm test` / `npm run test`  
+  _Run all of the above tests (code-linting, unit tests, e2e tests). This command is automatically
+  run before `npm publish`._
+
+- **"Watch" mode:** `npm run test-watch`  
+  _Watch all files and rerun the unit tests whenever something changes. For performance reasons
+  code-linting or e2e tests are omitted._
