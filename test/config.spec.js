@@ -1,12 +1,10 @@
 'use strict';
 
+// Imports - Local
+let config = require('../lib/config');
+
+// Tests
 describe('config', () => {
-  let config;
-
-  beforeEach(() => {
-    config = require('../lib/config');
-  });
-
   describe('#defaults', () => {
     let defaults;
 

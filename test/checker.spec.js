@@ -1,14 +1,17 @@
 'use strict';
 
+// Imports
+let https = require('https');
+
+// Imports - Local
+let Checker = require('../lib/checker');
+let config = require('../lib/config');
+
+// Tests
 describe('Checker', () => {
-  let Checker;
-  let config;
   let hadGhToken;
 
   beforeEach(() => {
-    Checker = require('../lib/checker');
-    config = require('../lib/config');
-
     if (!(hadGhToken = process.env.hasOwnProperty(config.ghTokenVar))) {
       process.env[config.ghTokenVar] = 'foo';
     }
@@ -88,7 +91,6 @@ describe('Checker', () => {
     beforeEach(() => {
       PassThrough = require('stream').PassThrough;
 
-      let https = require('https');
       httpsGetSpy = spyOn(https, 'get');
       httpsGetSpy.and.callFake(() => new PassThrough());
 
