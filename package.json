@@ -8,9 +8,9 @@
   ],
   "main": "lib/checker",
   "scripts": {
+    "lint": "eslint .",
     "prepublish": "npm test",
     "start": "node index",
-    "lint": "eslint .",
     "pretest": "npm run lint",
     "test": "npm run test-unit && npm run test-e2e",
     "test-e2e": "node scripts/run-tests --type=e2e",
