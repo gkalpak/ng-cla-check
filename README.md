@@ -76,8 +76,8 @@ The following test-types/modes are available:
   _Run all the unit tests once. These tests are quick and suitable to be run on every change._
 
 - **E2E tests:** `npm run test-e2e`  
-  _Run all the end-to-end tests once. These test hit actual API endpoints and are considerably slower
-  than unit tests._
+  _Run all the end-to-end tests once. These test may hit actual API endpoints and are considerably
+  slower than unit tests._
 
 - **All tests:** `npm test` / `npm run test`  
   _Run all of the above tests (code-linting, unit tests, e2e tests). This command is automatically
