@@ -2,6 +2,7 @@
 
 // Imports
 let https = require('https');
+let stream = require('stream');
 
 // Imports - Local
 let Checker = require('../../lib/checker');
@@ -84,13 +85,11 @@ describe('Checker', () => {
   });
 
   describe('#check()', () => {
-    let checker;
+    let PassThrough = stream.PassThrough;
     let httpsGetSpy;
-    let PassThrough;
+    let checker;
 
     beforeEach(() => {
-      PassThrough = require('stream').PassThrough;
-
       httpsGetSpy = spyOn(https, 'get');
       httpsGetSpy.and.callFake(() => new PassThrough());
 

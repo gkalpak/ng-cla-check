@@ -122,10 +122,10 @@ describe('Cli', () => {
     });
 
     it('should error if no PR is specified', () => {
-      cli._getAndValidateInput(['12345', '--repo="foo/bar']);
+      cli._getAndValidateInput(['12345', '--repo=foo/bar']);
       expect(cli._onError).not.toHaveBeenCalled();
 
-      cli._getAndValidateInput(['--repo="foo/bar']);
+      cli._getAndValidateInput(['--repo=foo/bar']);
       expect(cli._onError).toHaveBeenCalled();
     });
   });
