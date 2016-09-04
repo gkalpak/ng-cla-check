@@ -2,27 +2,23 @@
 
 // Imports
 let childProcess = require('child_process');
-let path = require('path');
 
 // Imports - Local
 let config = require('../../lib/config');
 
 // Tests
 describe('index', () => {
-  let exec = childProcess.exec;
-  let nodeExec = path.basename(process.argv[0]);
+  let spawn = childProcess.spawn;
   let indexScript = require.resolve('../../index');
 
   describe('--usage', () => {
     it('should display the usage instructions', done => {
-      let cmd = `${nodeExec} "${indexScript}" --usage`;
-
-      exec(cmd, null, (err, stdout) => {
-        expect(err).toBe(null);
-        expect(stdout).toContain(config.usageMessage);
-
-        done();
-      });
+      runWith(['--usage']).
+        then(response => {
+          expect(response.code).toBe(0);
+          expect(response.output).toContain(config.usageMessage);
+        }).
+        then(done);
     });
   });
 
@@ -33,13 +29,13 @@ describe('index', () => {
       return;
     }
 
-    let verifyError = (err, stdout) => {
-      expect(err).toEqual(jasmine.any(Error));
-      expect(stdout).toContain(':(');
+    let verifyError = response => {
+      expect(response.code).not.toBe(0);
+      expect(response.output).toContain(':(');
     };
-    let verifySuccess = (err, stdout) => {
-      expect(err).toBe(null);
-      expect(stdout).toContain(':)');
+    let verifySuccess = response => {
+      expect(response.code).toBe(0);
+      expect(response.output).toContain(':)');
     };
 
     createSpecs().forEach(outerSpec => {
@@ -55,17 +51,16 @@ describe('index', () => {
             let descriptionSuffix = `(repo: ${repo}, claLabel: ${claLabel}, prNo: ${prNo})`;
             let description = `${descriptionPrefix} - ${descriptionSuffix}`;
 
-            let cmd = `${nodeExec} "${indexScript}" ${prNo}`;
-            if (claLabel) cmd += ` --claLabel=${claLabel}`;
-            if (repo) cmd += ` --repo=${repo}`;
+            let args = [prNo];
+            if (claLabel) args.push(`--claLabel=${claLabel}`);
+            if (repo) args.push(`--repo=${repo}`);
 
             let verify = pass ? verifySuccess : verifyError;
 
             it(description, done => {
-              exec(cmd, null, (err, stdout) => {
-                verify(err, stdout);
-                done();
-              });
+              runWith(args).
+                then(verify).
+                then(done);
             });
           });
         });
@@ -163,4 +158,17 @@ describe('index', () => {
       ];
     }
   });
+
+  // Helpers
+  function runWith(args) {
+    return new Promise(resolve => {
+      args.unshift(indexScript);
+
+      let output = '';
+      let cb = (code, signal) => resolve({code, signal, output});
+
+      let proc = spawn(process.execPath, args).on('exit', cb);
+      proc.stdout.on('data', d => output += d);
+    });
+  }
 });
