@@ -24,6 +24,12 @@ describe('Checker', () => {
     }
   });
 
+  describe('Checker#GH_TOKEN_VAR', () => {
+    it('should expose `config.ghTokenVar` as a static property (for 3rd-party modules)', () => {
+      expect(Checker.GH_TOKEN_VAR).toBe(config.ghTokenVar);
+    });
+  });
+
   describe('#constructor()', () => {
     it('should accept an `opts` argument', () => {
       let checker = new Checker({
