@@ -57,6 +57,9 @@ let checker = new Checker({
 });
 ```
 
+**Note:** For convenience, the name of the GitHub access-token environment variable is exposed as
+`Checker.GH_TOKEN_VAR`.
+
 Finally, you can prevent the `checker` from logging any messages to the console (e.g. warn when no
 GitHub access-token is available), by passing `true` as the second argument:
 
@@ -84,5 +87,5 @@ The following test-types/modes are available:
   run before `npm publish`._
 
 - **"Watch" mode:** `npm run test-watch`  
-  _Watch all files and rerun the unit tests whenever something changes. For performance reasons
+  _Watch all files and rerun the unit tests whenever something changes. For performance reasons,
   code-linting or e2e tests are omitted._
