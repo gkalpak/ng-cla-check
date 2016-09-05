@@ -272,7 +272,7 @@ describe('Cli', () => {
       let called = false;
 
       checkSpy.and.callFake(function () {
-        expect(this._options.ghToken).toBeDefined();
+        expect(this._options.hasOwnProperty('ghToken')).toBe(true);
         expect(this._options).toEqual(jasmine.objectContaining({
           claLabel: 'foo: bar',
           repo: 'baz/qux'
