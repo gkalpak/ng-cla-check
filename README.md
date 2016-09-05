@@ -1,4 +1,4 @@
-# ng-cla-check
+# ng-cla-check [![Build Status][build-status-image]][build-status]
 
 ## Description
 
@@ -89,3 +89,7 @@ The following test-types/modes are available:
 - **"Watch" mode:** `npm run test-watch`  
   _Watch all files and rerun the unit tests whenever something changes. For performance reasons,
   code-linting or e2e tests are omitted._
+
+
+[build-status]: https://travis-ci.org/gkalpak/ng-cla-check
+[build-status-image]: https://travis-ci.org/gkalpak/ng-cla-check.svg?branch=master
