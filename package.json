@@ -15,7 +15,8 @@
     "test": "npm run test-unit && npm run test-e2e",
     "test-e2e": "node scripts/run-tests --type=e2e",
     "test-unit": "node scripts/run-tests --type=unit",
-    "test-watch": "npm run test-unit -- --watch"
+    "test-watch": "npm run test-unit -- --watch",
+    "postversion": "git push && git push --tags"
   },
   "bin": {
     "ng-cla-check": "index.js"
