@@ -16,7 +16,8 @@ describe('index', () => {
       runWith(['--usage']).
         then(response => {
           expect(response.code).toBe(0);
-          expect(response.output).toContain(config.usageMessage);
+          expect(response.stderr).toBe('');
+          expect(response.stdout).toContain(config.usageMessage);
         }).
         then(done);
     });
@@ -31,11 +32,13 @@ describe('index', () => {
 
     let verifyError = response => {
       expect(response.code).not.toBe(0);
-      expect(response.output).toContain(':(');
+      expect(response.stderr).toBe('');
+      expect(response.stdout).toContain(':(');
     };
     let verifySuccess = response => {
       expect(response.code).toBe(0);
-      expect(response.output).toContain(':)');
+      expect(response.stderr).toBe('');
+      expect(response.stdout).toContain(':)');
     };
 
     createSpecs().forEach(outerSpec => {
@@ -164,11 +167,13 @@ describe('index', () => {
     return new Promise(resolve => {
       args.unshift(indexScript);
 
-      let output = '';
-      let cb = (code, signal) => resolve({code, signal, output});
+      let stdout = '';
+      let stderr = '';
+      let cb = (code, signal) => resolve({code, signal, stdout, stderr});
 
       let proc = spawn(process.execPath, args).on('exit', cb);
-      proc.stdout.on('data', d => output += d);
+      proc.stdout.on('data', d => stdout += d);
+      proc.stderr.on('data', d => stderr += d);
     });
   }
 });
