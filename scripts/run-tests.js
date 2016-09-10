@@ -62,7 +62,7 @@ function runTests(testType, watch) {
 }
 
 function runTestsOnce(testType, keepRunning) {
-  let executable = process.argv[0];
+  let executable = process.execPath;
   let args = [path.join(__dirname, '_run-tests-once'), `"${path.join('test', testType)}"`];
   let proc = spawn(executable, args, {stdio: 'inherit'});
 
