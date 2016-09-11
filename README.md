@@ -84,11 +84,11 @@ The following test-types/modes are available:
 
 - **All tests:** `npm test` / `npm run test`  
   _Run all of the above tests (code-linting, unit tests, e2e tests). This command is automatically
-  run before `npm publish`._
+  run before `npm version` and `npm publish`._
 
 - **"Watch" mode:** `npm run test-watch`  
   _Watch all files and rerun the unit tests whenever something changes. For performance reasons,
-  code-linting or e2e tests are omitted._
+  code-linting and e2e tests are omitted._
 
 
 [build-status]: https://travis-ci.org/gkalpak/ng-cla-check
