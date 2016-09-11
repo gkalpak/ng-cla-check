@@ -45,25 +45,51 @@ function debounce(fn, delay) {
   }
 }
 
+function onWatchEventGen(cb) {
+  let ignoredDirsRe = /^(\..+|node_modules)$/;
+  let onWatchEvent = (_, filepath) => {
+    let dirs = path.dirname(filepath).split(path.sep);
+
+    if (!dirs.some(dir => ignoredDirsRe.test(dir))) {
+      fs.stat(filepath, (err, stats) => {
+        if (err) {
+          if (err.code !== 'ENOENT') {
+            console.error('ERROR:', err.message, err.stack);
+          } else {
+            cb();
+          }
+        } else if (stats.isFile()) {
+          cb();
+        }
+      });
+    }
+  };
+
+  return onWatchEvent;
+}
+
 function runTests(testType, watch) {
+  let doRunTests = () => runTestsOnce(testType, watch);
   let watcher = null;
 
   if (watch) {
+    let debouncedDoRunTests = debounce(doRunTests, 1000);
+
     let rootDir = path.join(__dirname, '..');
     let config = {persistent: true, recursive: true};
-    let onChange = debounce(runTestsOnce, 1000).bind(null, testType, true);
+    let onEvent = onWatchEventGen(debouncedDoRunTests);
 
-    watcher = fs.watch(rootDir, config, onChange);
+    watcher = fs.watch(rootDir, config, onEvent);
   }
 
-  runTestsOnce(testType, watch);
+  doRunTests();
 
   return watcher;
 }
 
 function runTestsOnce(testType, keepRunning) {
   let executable = process.execPath;
-  let args = [path.join(__dirname, '_run-tests-once'), `"${path.join('test', testType)}"`];
+  let args = [path.join(__dirname, '_run-tests-once'), `${path.join('test', testType)}`];
   let proc = spawn(executable, args, {stdio: 'inherit'});
 
   console.log('-'.repeat(50));
