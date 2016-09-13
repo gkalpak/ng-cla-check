@@ -2,7 +2,7 @@
 
 ## Description
 
-A simple utility to check if an AngularJS PR has the `cla: yes` label.
+A utility for checking if an (AngularJS-related) GitHub PR has a signed CLA (based on its labels).
 
 ## Usage
 
