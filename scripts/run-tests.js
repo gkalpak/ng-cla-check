@@ -45,7 +45,7 @@ function debounce(fn, delay) {
   }
 }
 
-function onWatchEventGen(cb) {
+function onWatchEventFnGen(cb) {
   let ignoredDirsRe = /^(\..+|node_modules)$/;
   let onWatchEvent = (_, filepath) => {
     let dirs = path.dirname(filepath).split(path.sep);
@@ -77,7 +77,7 @@ function runTests(testType, watch) {
 
     let rootDir = path.join(__dirname, '..');
     let config = {persistent: true, recursive: true};
-    let onEvent = onWatchEventGen(debouncedDoRunTests);
+    let onEvent = onWatchEventFnGen(debouncedDoRunTests);
 
     watcher = fs.watch(rootDir, config, onEvent);
   }
