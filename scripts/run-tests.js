@@ -2,9 +2,9 @@
 
 // Imports
 let fs = require('fs');
-let minimist = require('minimist');
 let path = require('path');
 let spawn = require('child_process').spawn;
+let Utils = require('@gkalpak/ng-maintain-utils').Utils;
 
 // Exports
 module.exports = runTests;
@@ -14,7 +14,7 @@ _main(process.argv.slice(2));
 
 // Functions - Definitions
 function _main(args) {
-  args = minimist(args, {boolean: true});
+  args = (new Utils).parseArgs(args);
 
   let testType = args.type || '';
   let watch = args.watch;

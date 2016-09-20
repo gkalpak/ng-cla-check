@@ -8,7 +8,10 @@ let Cli = require('./lib/cli');
 _main(process.argv.slice(2));
 
 // Functions - Definitions
-function _main(args) {
+function _main(rawArgs) {
   let cli = new Cli();
-  cli.run(args);
+
+  cli.
+    run(rawArgs).
+    then(() => process.exit(0), () => process.exit(1));
 }

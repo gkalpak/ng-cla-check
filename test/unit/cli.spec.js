@@ -1,9 +1,14 @@
 'use strict';
 
+// Imports
+let ngMaintainUtils = require('@gkalpak/ng-maintain-utils');
+
+let AbstractCli = ngMaintainUtils.AbstractCli;
+
 // Imports - Local
 let Checker = require('../../lib/checker');
 let Cli = require('../../lib/cli');
-let config = require('../../lib/config');
+let Config = require('../../lib/config');
 
 // Tests
 describe('Cli', () => {
@@ -11,337 +16,209 @@ describe('Cli', () => {
 
   beforeEach(() => {
     cli = new Cli();
+
+    spyOn(console, 'log');
   });
 
-  describe('#_displayUsage()', () => {
-    it('should display the usage instructions', () => {
-      spyOn(console, 'log');
-
-      cli._displayUsage();
-
-      expect(console.log).toHaveBeenCalledTimes(1);
-      expect(console.log.calls.argsFor(0)[0]).toContain(config.usageMessage);
+  describe('#constructor()', () => {
+    it('should create a `Config` instance (and pass it to its super-constructor)', () => {
+      expect(cli._config).toEqual(jasmine.any(Config));
     });
   });
 
-  describe('#_getAndValidateInput()', () => {
-    beforeEach(() => {
-      spyOn(cli, '_onError');
-    });
+  [
+    '_displayExperimentalTool',
+    '_displayHeader',
+    '_displayInstructions'
+  ].forEach(methodName => {
+    describe(`#${methodName}()`, () => {
+      it('should do nothing', () => {
+        cli[methodName]();
 
-    it('should stop parsing if `--usage` is detected', () => {
-      let args = ['foo', 'bar', '--baz=qux', '--usage'];
-      let input = cli._getAndValidateInput(args);
-
-      expect(input).toEqual({usage: true});
-    });
-
-    it('should remove surrounding quotes from "named" arguments', () => {
-      spyOn(cli, '_removeSurroundingQuotes').and.callThrough();
-
-      let args = ['"12345"', '--claLabel=\'foo: bar\'', '--repo="baz/qux"'];
-      let input = cli._getAndValidateInput(args);
-
-      expect(cli._removeSurroundingQuotes).toHaveBeenCalled();
-      expect(input).toEqual(jasmine.objectContaining({
-        claLabel: 'foo: bar',
-        repo: 'baz/qux',
-        prNo: '"12345"'
-      }));
-    });
-
-    it('should read the `claLabel` argument', () => {
-      let args;
-      let input;
-
-      args = ['12345', '--claLabel="foo: bar"'];
-      input = cli._getAndValidateInput(args);
-
-      expect(input.claLabel).toBe('foo: bar');
-
-      args = ['12345'];
-      input = cli._getAndValidateInput(args);
-
-      expect(input.claLabel).toBe(null);
-    });
-
-    it('should read the `repo` argument', () => {
-      let args;
-      let input;
-
-      args = ['12345', '--repo=foo/bar'];
-      input = cli._getAndValidateInput(args);
-
-      expect(input.repo).toBe('foo/bar');
-
-      args = ['12345'];
-      input = cli._getAndValidateInput(args);
-
-      expect(input.repo).toBe(null);
-    });
-
-    it('should read the `prNo` (first "unnamed" argument)', () => {
-      let args;
-      let input;
-
-      args = ['12345'];
-      input = cli._getAndValidateInput(args);
-
-      expect(input.prNo).toBe(12345);
-
-      args = ['12345', '--foo=bar'];
-      input = cli._getAndValidateInput(args);
-
-      expect(input.prNo).toBe(12345);
-
-      args = ['--foo=bar', '12345'];
-      input = cli._getAndValidateInput(args);
-
-      expect(input.prNo).toBe(12345);
-
-      args = ['--foo=bar', '--baz=qux', '12345'];
-      input = cli._getAndValidateInput(args);
-
-      expect(input.prNo).toBe(12345);
-
-      args = ['12345', '67890'];
-      input = cli._getAndValidateInput(args);
-
-      expect(input.prNo).toBe(12345);
-    });
-
-    it('should error if a custom `repo` does not contain a username', () => {
-      cli._getAndValidateInput(['12345']);
-      expect(cli._onError).not.toHaveBeenCalled();
-
-      cli._getAndValidateInput(['12345', '--repo=foo/bar']);
-      expect(cli._onError).not.toHaveBeenCalled();
-
-      cli._getAndValidateInput(['12345', '--repo=foo-bar']);
-      expect(cli._onError).toHaveBeenCalled();
-    });
-
-    it('should error if no PR is specified', () => {
-      cli._getAndValidateInput(['12345', '--repo=foo/bar']);
-      expect(cli._onError).not.toHaveBeenCalled();
-
-      cli._getAndValidateInput(['--repo=foo/bar']);
-      expect(cli._onError).toHaveBeenCalled();
+        expect(console.log).not.toHaveBeenCalled();
+      });
     });
   });
 
-  describe('#_onError()', () => {
-    beforeEach(() => {
-      spyOn(console, 'error');
-      spyOn(cli, '_reportAndExit');
+  describe('#_theEnd()', () => {
+    it('should log a happy message to the console', () => {
+      cli._theEnd();
+      cli._theEnd(false);
+      cli._theEnd(true);
+
+      expect(console.log).toHaveBeenCalledTimes(3);
+      expect(console.log.calls.argsFor(0)[0]).toContain(':)');
+      expect(console.log.calls.argsFor(1)[0]).toContain(':)');
+      expect(console.log.calls.argsFor(2)[0]).toContain(':)');
     });
 
-    it('should call `_reportAndExit()` with `1`', () => {
-      cli._onError();
-
-      expect(cli._reportAndExit).toHaveBeenCalledWith(1);
-    });
-
-    it('should log an error to the console (if specified)', () => {
-      cli._onError('Test');
-
-      expect(console.error).toHaveBeenCalled();
-      expect(console.error.calls.argsFor(0)[0]).toContain('Test');
-      expect(cli._reportAndExit).toHaveBeenCalledWith(1);
-
-      console.error.calls.reset();
-      cli._reportAndExit.calls.reset();
-
-      cli._onError();
-
-      expect(console.error).not.toHaveBeenCalled();
-      expect(cli._reportAndExit).toHaveBeenCalledWith(1);
-    });
-  });
-
-  describe('#_onSuccess()', () => {
-    beforeEach(() => {
-      spyOn(cli, '_reportAndExit');
-    });
-
-    it('should call `_reportAndExit()` with `0`', () => {
-      cli._onSuccess();
-
-      expect(cli._reportAndExit).toHaveBeenCalledWith(0);
-    });
-  });
-
-  describe('#_removeSurroundingQuotes()', () => {
-    it('should return the passed in Object', () => {
-      let input = {foo: '"bar"', baz: '"qux"'};
-      let output = cli._removeSurroundingQuotes(input);
+    it('should return the input value', () => {
+      let input = {};
+      let output = cli._theEnd(input);
 
       expect(output).toBe(input);
     });
-
-    it('should remove surrounding double-quotes', () => {
-      let input = {foo: '"bar"', baz: '"qux"'};
-      let output = cli._removeSurroundingQuotes(input);
-
-      expect(output).toEqual({foo: 'bar', baz: 'qux'});
-    });
-
-    it('should remove surrounding single-quotes', () => {
-      let input = {foo: '\'bar\'', baz: '\'qux\''};
-      let output = cli._removeSurroundingQuotes(input);
-
-      expect(output).toEqual({foo: 'bar', baz: 'qux'});
-    });
-
-    it('should not remove non-matching quotes', () => {
-      let input = {foo: '"bar\'', baz: '\'qux"'};
-      let output = cli._removeSurroundingQuotes(input);
-
-      expect(output).toEqual({foo: '"bar\'', baz: '\'qux"'});
-    });
-
-    it('should process top-level properties only', () => {
-      let input = {foo: {bar: '"bar"'}, baz: ['"qux"']};
-      let output = cli._removeSurroundingQuotes(input);
-
-      expect(output).toEqual({foo: {bar: '"bar"'}, baz: ['"qux"']});
-    });
-
-    it('should remove the outer-most pair of quotes only', () => {
-      let input = {foo: '"\'bar\'"', baz: '\'"qux"\''};
-      let output = cli._removeSurroundingQuotes(input);
-
-      expect(output).toEqual({foo: '\'bar\'', baz: '"qux"'});
-    });
   });
 
-  describe('#_reportAndExit()', () => {
-    beforeEach(() => {
-      spyOn(console, 'log');
-      spyOn(process, 'exit');
-    });
+  describe('#getPhases()', () => {
+    it('should return an empty array', () => {
+      let phases = cli.getPhases();
 
-    it('should exit with the specified code', () => {
-      cli._reportAndExit(0);
-      cli._reportAndExit(1);
-      cli._reportAndExit(2);
-
-      expect(process.exit).toHaveBeenCalledTimes(3);
-      expect(process.exit.calls.argsFor(0)[0]).toBe(0);
-      expect(process.exit.calls.argsFor(1)[0]).toBe(1);
-      expect(process.exit.calls.argsFor(2)[0]).toBe(2);
-    });
-
-    it('should default to exiting with `0`', () => {
-      cli._reportAndExit();
-
-      expect(process.exit).toHaveBeenCalledTimes(1);
-      expect(process.exit.calls.argsFor(0)[0]).toBe(0);
-    });
-
-    it('should log an appropriate message to the console', () => {
-      cli._reportAndExit(0);
-      cli._reportAndExit(1);
-
-      expect(console.log).toHaveBeenCalledTimes(2);
-      expect(console.log.calls.argsFor(0)[0]).toMatch(/^:\)/);
-      expect(console.log.calls.argsFor(1)[0]).toMatch(/^:\(/);
+      expect(phases).toEqual([]);
     });
   });
 
   describe('#run()', () => {
-    let checkSpy;
+    let superDeferred;
 
     beforeEach(() => {
-      spyOn(process, 'exit');
+      superDeferred = null;
 
-      checkSpy = spyOn(Checker.prototype, 'check');
-      checkSpy.and.returnValue(new Promise(() => {}));
+      spyOn(AbstractCli.prototype, 'run').and.callFake(() => new Promise((resolve, reject) => {
+        superDeferred = {resolve, reject};
+      }));
     });
 
-    it('should read and validate the input', () => {
-      spyOn(cli, '_getAndValidateInput').and.returnValue({});
+    it('should call its super-method with the specified `rawArgs` and a callback', () => {
+      cli.run(['foo', 'bar']);
 
-      let args = [];
-      cli.run(args);
-
-      expect(cli._getAndValidateInput).toHaveBeenCalledWith(args);
-    });
-
-    it('should create a Checker and call `check()`', () => {
-      let called = false;
-
-      checkSpy.and.callFake(function () {
-        expect(this._options.hasOwnProperty('ghToken')).toBe(true);
-        expect(this._options).toEqual(jasmine.objectContaining({
-          claLabel: 'foo: bar',
-          repo: 'baz/qux'
-        }));
-
-        called = true;
-
-        return new Promise(() => {});
-      });
-
-      let args = ['12345', '--claLabel="foo: bar"', '--repo=baz/qux'];
-      cli.run(args);
-
-      expect(called).toBe(true);
-    });
-
-    it('should pass `prNo` to `check()`', () => {
-      let args = ['12345'];
-      cli.run(args);
-
-      expect(checkSpy).toHaveBeenCalledWith(12345);
+      expect(AbstractCli.prototype.run).toHaveBeenCalledWith(['foo', 'bar'], jasmine.any(Function));
     });
 
     it('should return a promise', () => {
-      let args = ['12345'];
-      let promise = cli.run(args);
+      let promise = cli.run([]);
 
       expect(promise).toEqual(jasmine.any(Promise));
     });
 
-    it('should attach a success callback to the promise returned by Checker', done => {
-      checkSpy.and.returnValue(Promise.resolve());
-      spyOn(cli, '_onSuccess');
+    it('should resolve the returned promise if the super-method resolves', done => {
+      cli.
+        run([]).
+        then(value => expect(value).toBe('foo')).
+        then(done);
 
-      let args = ['12345'];
-      cli.run(args).then(() => {
-        expect(cli._onSuccess).toHaveBeenCalled();
-        done();
+      superDeferred.resolve('foo');
+    });
+
+    describe('- On error', () => {
+      let errorCb;
+
+      beforeEach(() => {
+        errorCb = jasmine.createSpy('errorCb').and.returnValue(Promise.reject());
+
+        spyOn(cli._uiUtils, 'reportAndRejectFnGen').and.returnValue(errorCb);
+      });
+
+      it('should log a sad message to the console if `check()` fails', done => {
+        spyOn(Checker.prototype, 'check').and.returnValue(Promise.reject());
+        AbstractCli.prototype.run.and.callFake((_, doWork) => doWork({}));
+
+        cli.
+          run([]).
+          catch(() => {
+            expect(cli._checker.check).toHaveBeenCalled();
+            expect(console.log).toHaveBeenCalled();
+            expect(console.log.calls.argsFor(0)[0]).toContain(':(');
+
+            done();
+          });
+      });
+
+      it('should not log anything if its super-method rejects (but not `check()`)', done => {
+        cli.
+          run([]).
+          catch(() => {
+            expect(console.log).not.toHaveBeenCalled();
+            done();
+          });
+
+        superDeferred.reject('for a reason');
+      });
+
+      it('should reject the returned promise if the super-method rejects', done => {
+        cli.
+          run([]).
+          catch(done);
+
+        superDeferred.reject();
+      });
+
+      it('should not "reportAndReject" if the rejection is empty', done => {
+        cli.
+          run([]).
+          catch(() => {
+            expect(errorCb).not.toHaveBeenCalled();
+            done();
+          });
+
+        superDeferred.reject();
+      });
+
+      it('should "reportAndReject" if the rejection is non-empty', done => {
+        cli.
+          run([]).
+          catch(() => {
+            expect(cli._uiUtils.reportAndRejectFnGen).toHaveBeenCalledWith('ERROR_unexpected');
+            expect(errorCb).toHaveBeenCalledWith('for a reason');
+
+            done();
+          });
+
+        superDeferred.reject('for a reason');
+      });
+
+      it('should reject with the value returned by "reportAndReject"', done => {
+        errorCb.and.returnValue(Promise.reject('for no reason'));
+
+        cli.
+          run([]).
+          catch(error => {
+            expect(error).toBe('for no reason');
+            done();
+          });
+
+        superDeferred.reject('for a reason');
       });
     });
 
-    it('should attach an error callback to the promise returned by Checker', done => {
-      checkSpy.and.returnValue(Promise.reject('Test'));
-      spyOn(cli, '_onError');
+    describe('- Doing work', () => {
+      let input;
+      let checkSpy;
 
-      let args = ['12345'];
-      cli.run(args).then(() => {
-        expect(cli._onError).toHaveBeenCalledWith('Test');
-        done();
-      });
-    });
+      beforeEach(() => {
+        input = {};
+        checkSpy = spyOn(Checker.prototype, 'check').and.returnValue(Promise.resolve('foo'));
 
-    it('should display the usage instructions (and exit) if `--usage` is detected', () => {
-      spyOn(cli, '_displayUsage').and.callFake(() => {
-        expect(process.exit).not.toHaveBeenCalled();
-      });
-      checkSpy.and.callFake(() => {
-        // `process.exit` is being stubbed (so the process isn't really terminated),
-        // but it should have been called before calling `Checker.prototype.check()`.
-        expect(process.exit).toHaveBeenCalledWith(0);
-
-        return new Promise(() => {});
+        AbstractCli.prototype.run.and.callFake((_, doWork) => doWork(input));
       });
 
-      let args = ['--usage'];
-      cli.run(args);
+      it('should create a `Checker`', done => {
+        cli.
+          run([]).
+          then(() => expect(cli._checker).toEqual(jasmine.any(Checker))).
+          then(done);
+      });
 
-      expect(cli._displayUsage).toHaveBeenCalled();
-      expect(checkSpy).toHaveBeenCalled();
+      it('should pass `claLabel` and `repo` to `Checker`', done => {
+        input.claLabel = 'foo';
+        input.repo = 'bar';
+
+        cli.
+          run([]).
+          then(() => expect(cli._checker._options.claLabel).toBe('foo')).
+          then(() => expect(cli._checker._options.repo).toBe('bar')).
+          then(done);
+      });
+
+      it('should call `check()` with `prNo` and return the returned value', done => {
+        input.prNo = 12345;
+
+        cli.
+          run([]).
+          then(value => expect(value).toBe('foo')).
+          then(() => expect(checkSpy).toHaveBeenCalledWith(12345)).
+          then(done);
+      });
     });
   });
 });

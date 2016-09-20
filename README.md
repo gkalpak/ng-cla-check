@@ -9,6 +9,9 @@ A utility for checking if an (AngularJS-related) GitHub PR has a signed CLA (bas
 ### Using from the command-line
 
 ```shell
+# Show version info
+ng-cla-check --version
+
 # Show usage instructions
 ng-cla-check --usage
 

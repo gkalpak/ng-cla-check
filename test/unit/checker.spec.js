@@ -6,32 +6,32 @@ let stream = require('stream');
 
 // Imports - Local
 let Checker = require('../../lib/checker');
-let config = require('../../lib/config');
 
 // Tests
 describe('Checker', () => {
+  let ghTokenVar = Checker.getGhTokenVar();
   let hadGhToken;
 
   beforeEach(() => {
-    if (!(hadGhToken = process.env.hasOwnProperty(config.ghTokenVar))) {
-      process.env[config.ghTokenVar] = 'foo';
+    if (!(hadGhToken = process.env.hasOwnProperty(ghTokenVar))) {
+      process.env[ghTokenVar] = 'foo';
     }
   });
 
   afterEach(() => {
     if (!hadGhToken) {
-      delete process.env[config.ghTokenVar];
+      delete process.env[ghTokenVar];
     }
   });
 
-  describe('Checker#GH_TOKEN_VAR', () => {
-    it('should expose `config.ghTokenVar` as a static property (for 3rd-party modules)', () => {
-      expect(Checker.GH_TOKEN_VAR).toBe(config.ghTokenVar);
+  describe('Checker#getGhTokenVar()', () => {
+    it('should return the GitHub access-token var (string)', () => {
+      expect(Checker.getGhTokenVar()).toBe('GITHUB_ACCESS_TOKEN');
     });
   });
 
   describe('#constructor()', () => {
-    it('should accept an `opts` argument', () => {
+    it('should accept an `options` argument', () => {
       let checker = new Checker({
         ghToken: 'foo',
         claLabel: 'bar',
@@ -43,7 +43,7 @@ describe('Checker', () => {
       expect(checker._options.repo).toBe('baz');
     });
 
-    it('should fallback to default values if no `opts` is specified', () => {
+    it('should fallback to default values if no `options` is specified', () => {
       let checker = new Checker();
 
       expect(checker._options.ghToken).toEqual(jasmine.any(String));
@@ -73,11 +73,12 @@ describe('Checker', () => {
       let checker1 = new Checker({ghToken: ''});
       let checker2 = new Checker({ghToken: false});
 
-      expect(checker1._options.ghToken).toBe(process.env[config.ghTokenVar]);
-      expect(checker2._options.ghToken).not.toBe(process.env[config.ghTokenVar]);
+      expect(checker1._options.ghToken).toBe(process.env[ghTokenVar]);
+      expect(checker2._options.ghToken).not.toBe(process.env[ghTokenVar]);
+      expect(checker2._options.ghToken).toBe(false);
     });
 
-    it('should support passing a `quiet` argument', () => {
+    it('should accept a `quiet` argument', () => {
       let checker1 = new Checker();
       let checker2 = new Checker(null, 0);
       let checker3 = new Checker(null, false);
@@ -96,8 +97,7 @@ describe('Checker', () => {
     let checker;
 
     beforeEach(() => {
-      httpsGetSpy = spyOn(https, 'get');
-      httpsGetSpy.and.callFake(() => new PassThrough());
+      httpsGetSpy = spyOn(https, 'get').and.callFake(() => new PassThrough());
 
       checker = new Checker({
         ghToken: 'foo',
