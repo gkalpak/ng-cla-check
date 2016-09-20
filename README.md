@@ -30,7 +30,7 @@ ng-cla-check 12345 --repo="some-user/some-repo" --claLabel="some text"
 ### Using from other modules
 
 ```js
-let Checker = require('ng-cla-check');
+let Checker = require('@gkalpak/ng-cla-check');
 let checker = new Checker(/* Use default options */);
 
 checker.check(prNo).then(
@@ -40,7 +40,7 @@ checker.check(prNo).then(
     err => {
       // Unable to verify CLA...
       if (err) {
-        // ...because an error occurred (e.g. network error, authentication error etc).
+        // ...because an error occurred (e.g. network error, authentication error, etc).
       } else {
         // ...because it was probably not signed.
       }
