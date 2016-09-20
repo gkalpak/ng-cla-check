@@ -14,7 +14,7 @@ _main(process.argv.slice(2));
 
 // Functions - Definitions
 function _main(args) {
-  args = minimist(args);
+  args = minimist(args, {boolean: true});
 
   let testType = args.type || '';
   let watch = args.watch;
