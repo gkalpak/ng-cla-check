@@ -48,20 +48,24 @@ function debounce(fn, delay) {
 function onWatchEventFnGen(cb) {
   let ignoredDirsRe = /^(\..+|node_modules)$/;
   let onWatchEvent = (_, filepath) => {
-    let dirs = path.dirname(filepath).split(path.sep);
+    if (!filepath) {
+      cb();
+    } else {
+      let dirs = path.dirname(filepath).split(path.sep);
 
-    if (!dirs.some(dir => ignoredDirsRe.test(dir))) {
-      fs.stat(filepath, (err, stats) => {
-        if (err) {
-          if (err.code !== 'ENOENT') {
-            console.error('ERROR:', err.message, err.stack);
-          } else {
+      if (!dirs.some(dir => ignoredDirsRe.test(dir))) {
+        fs.stat(filepath, (err, stats) => {
+          if (err) {
+            if (err.code !== 'ENOENT') {
+              console.error('ERROR:', err.message, err.stack);
+            } else {
+              cb();
+            }
+          } else if (stats.isFile()) {
             cb();
           }
-        } else if (stats.isFile()) {
-          cb();
-        }
-      });
+        });
+      }
     }
   };
 
