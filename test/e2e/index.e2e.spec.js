@@ -60,7 +60,7 @@ describe('index', () => {
         runWith(['12345', '--repo=baz\\qux']).
           then(response => {
             expect(response.code).toBe(1);
-            expect(response.stdout).toBe('');
+            expect(response.stdout).toContain(':(');
             expect(response.stderr).toContain('ERROR: Invalid repo');
             expect(response.stderr).toContain('Make sure to include the username');
             expect(response.stderr).toContain(config.defaults.repo);
@@ -73,7 +73,7 @@ describe('index', () => {
           return runWith(['12345', claLabelArg]).
             then(response => {
               expect(response.code).toBe(1);
-              expect(response.stdout).toBe('');
+              expect(response.stdout).toContain(':(');
               expect(response.stderr).toContain('ERROR: The CLA label cannot be empty');
             });
         });
@@ -87,7 +87,7 @@ describe('index', () => {
         runWith([]).
           then(response => {
             expect(response.code).toBe(1);
-            expect(response.stdout).toBe('');
+            expect(response.stdout).toContain(':(');
             expect(response.stderr).toContain('ERROR: No PR specified');
             expect(response.stderr).toContain(config.messages.usage);
           }).

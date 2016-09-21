@@ -29,7 +29,8 @@ describe('Cli', () => {
   [
     '_displayExperimentalTool',
     '_displayHeader',
-    '_displayInstructions'
+    '_displayInstructions',
+    '_insertEmptyLine'
   ].forEach(methodName => {
     describe(`#${methodName}()`, () => {
       it('should do nothing', () => {
@@ -40,11 +41,11 @@ describe('Cli', () => {
     });
   });
 
-  describe('#_theEnd()', () => {
+  describe('#_theHappyEnd()', () => {
     it('should log a happy message to the console', () => {
-      cli._theEnd();
-      cli._theEnd(false);
-      cli._theEnd(true);
+      cli._theHappyEnd();
+      cli._theHappyEnd(false);
+      cli._theHappyEnd(true);
 
       expect(console.log).toHaveBeenCalledTimes(3);
       expect(console.log.calls.argsFor(0)[0]).toContain(':)');
@@ -54,9 +55,45 @@ describe('Cli', () => {
 
     it('should return the input value', () => {
       let input = {};
-      let output = cli._theEnd(input);
+      let output = cli._theHappyEnd(input);
 
       expect(output).toBe(input);
+    });
+  });
+
+  describe('#_theUnhappyEnd()', () => {
+    beforeEach(() => {
+      spyOn(AbstractCli.prototype, '_theUnhappyEnd').and.returnValue('foo');
+    });
+
+    it('should log a sad message to the console', () => {
+      cli._theUnhappyEnd();
+      cli._theUnhappyEnd(false);
+      cli._theUnhappyEnd(true);
+
+      expect(console.log).toHaveBeenCalledTimes(3);
+      expect(console.log.calls.argsFor(0)[0]).toContain(':(');
+      expect(console.log.calls.argsFor(1)[0]).toContain(':(');
+      expect(console.log.calls.argsFor(2)[0]).toContain(':(');
+    });
+
+    it('should call its super-method', () => {
+      cli._theUnhappyEnd();
+
+      expect(AbstractCli.prototype._theUnhappyEnd).toHaveBeenCalled();
+    });
+
+    it('should pass the input to its super-method', () => {
+      let input = {};
+      cli._theUnhappyEnd(input);
+
+      expect(AbstractCli.prototype._theUnhappyEnd).toHaveBeenCalledWith(input);
+    });
+
+    it('should return the value returned by its super-method', () => {
+      let output = cli._theUnhappyEnd();
+
+      expect(output).toBe('foo');
     });
   });
 
@@ -109,75 +146,12 @@ describe('Cli', () => {
         spyOn(cli._uiUtils, 'reportAndRejectFnGen').and.returnValue(errorCb);
       });
 
-      it('should log a sad message to the console if `check()` fails', done => {
-        spyOn(Checker.prototype, 'check').and.returnValue(Promise.reject());
-        AbstractCli.prototype.run.and.callFake((_, doWork) => doWork({}));
-
-        cli.
-          run([]).
-          catch(() => {
-            expect(cli._checker.check).toHaveBeenCalled();
-            expect(console.log).toHaveBeenCalled();
-            expect(console.log.calls.argsFor(0)[0]).toContain(':(');
-
-            done();
-          });
-      });
-
-      it('should not log anything if its super-method rejects (but not `check()`)', done => {
-        cli.
-          run([]).
-          catch(() => {
-            expect(console.log).not.toHaveBeenCalled();
-            done();
-          });
-
-        superDeferred.reject('for a reason');
-      });
-
       it('should reject the returned promise if the super-method rejects', done => {
         cli.
           run([]).
           catch(done);
 
         superDeferred.reject();
-      });
-
-      it('should not "reportAndReject" if the rejection is empty', done => {
-        cli.
-          run([]).
-          catch(() => {
-            expect(errorCb).not.toHaveBeenCalled();
-            done();
-          });
-
-        superDeferred.reject();
-      });
-
-      it('should "reportAndReject" if the rejection is non-empty', done => {
-        cli.
-          run([]).
-          catch(() => {
-            expect(cli._uiUtils.reportAndRejectFnGen).toHaveBeenCalledWith('ERROR_unexpected');
-            expect(errorCb).toHaveBeenCalledWith('for a reason');
-
-            done();
-          });
-
-        superDeferred.reject('for a reason');
-      });
-
-      it('should reject with the value returned by "reportAndReject"', done => {
-        errorCb.and.returnValue(Promise.reject('for no reason'));
-
-        cli.
-          run([]).
-          catch(error => {
-            expect(error).toBe('for no reason');
-            done();
-          });
-
-        superDeferred.reject('for a reason');
       });
     });
 
