@@ -144,22 +144,14 @@ describe('Cli', () => {
       superDeferred.resolve('foo');
     });
 
-    describe('- On error', () => {
-      let errorCb;
+    it('should reject the returned promise if the super-method rejects', done => {
+      spyOn(cli._uiUtils, 'reportAndRejectFnGen').and.returnValue(() => Promise.reject());
 
-      beforeEach(() => {
-        errorCb = jasmine.createSpy('errorCb').and.returnValue(Promise.reject());
+      cli.
+        run([]).
+        catch(done);
 
-        spyOn(cli._uiUtils, 'reportAndRejectFnGen').and.returnValue(errorCb);
-      });
-
-      it('should reject the returned promise if the super-method rejects', done => {
-        cli.
-          run([]).
-          catch(done);
-
-        superDeferred.reject();
-      });
+      superDeferred.reject();
     });
 
     describe('- Doing work', () => {
