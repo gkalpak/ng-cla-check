@@ -60,8 +60,8 @@ let checker = new Checker({
 });
 ```
 
-**Note:** For convenience, the name of the GitHub access-token environment variable is exposed as
-`Checker.GH_TOKEN_VAR`.
+**Note:** For convenience, the name of the GitHub access-token environment variable can be retrieved
+with `Checker.getGhTokenVar()`.
 
 Finally, you can prevent the `checker` from logging any messages to the console (e.g. warn when no
 GitHub access-token is available), by passing `true` as the second argument:
