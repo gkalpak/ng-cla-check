@@ -43,12 +43,12 @@ describe('index', () => {
   });
 
   describe('--instructions', () => {
-    it('should not display anything', done => {
+    it('should display an "unsupported argument" warning', done => {
       runWith(['12345', '--instructions']).
         then(response => {
           expect(response.code).toBe(0);
           expect(response.stderr).toBe('');
-          expect(response.stdout).toBe('');
+          expect(response.stdout.trim()).toBe('WARNING: Unsupported argument (`instructions`).');
         }).
         then(done);
     });

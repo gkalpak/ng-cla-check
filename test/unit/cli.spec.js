@@ -29,7 +29,6 @@ describe('Cli', () => {
   [
     '_displayExperimentalTool',
     '_displayHeader',
-    '_displayInstructions',
     '_insertEmptyLine'
   ].forEach(methodName => {
     describe(`#${methodName}()`, () => {
@@ -38,6 +37,14 @@ describe('Cli', () => {
 
         expect(console.log).not.toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('#_displayInstructions()', () => {
+    it('should display an "unsupported argument" warning', () => {
+      cli._displayInstructions();
+
+      expect(console.log).toHaveBeenCalledWith('WARNING: Unsupported argument (`instructions`).');
     });
   });
 
