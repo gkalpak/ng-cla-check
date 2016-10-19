@@ -30,7 +30,7 @@
     "url": "git+https://github.com/gkalpak/ng-cla-check.git"
   },
   "dependencies": {
-    "@gkalpak/ng-maintain-utils": "0.0.11"
+    "@gkalpak/ng-maintain-utils": "0.0.13"
   },
   "devDependencies": {
     "eslint": "^3.5.0",
