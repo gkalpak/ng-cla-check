@@ -48,7 +48,7 @@ describe('index', () => {
         then(response => {
           expect(response.code).toBe(0);
           expect(response.stderr).toBe('');
-          expect(response.stdout.trim()).toBe('WARNING: Unsupported argument (`instructions`).');
+          expect(response.stdout).toContain('WARNING: Unsupported argument (`instructions`).');
         }).
         then(done);
     });
@@ -153,9 +153,9 @@ describe('index', () => {
             existingClaLabel: '"component: filters"'
           },
           existingRepo: {
-            name: 'angular/angular',
-            goodPrNo: 5867,
-            existingClaLabel: '"pr_state: LGTM"'
+            name: 'gkalpak/ng-cla-check',
+            goodPrNo: 1,
+            existingClaLabel: '"test"'
           },
           nonExistingClaLabel: '"foo: bar"',
           nonExistingRepo: {
@@ -201,6 +201,7 @@ describe('index', () => {
               {
                 description: '(existing)',
                 prNo: inputs.existingRepo.goodPrNo,
+                claLabel: inputs.existingRepo.existingClaLabel,
                 repo: inputs.existingRepo.name,
                 pass: true
               },

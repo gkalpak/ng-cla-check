@@ -84,13 +84,7 @@ describe('Cli', () => {
       expect(console.log.calls.argsFor(2)[0]).toContain(':(');
     });
 
-    it('should call its super-method', () => {
-      cli._theUnhappyEnd();
-
-      expect(AbstractCli.prototype._theUnhappyEnd).toHaveBeenCalled();
-    });
-
-    it('should pass the input to its super-method', () => {
+    it('should call its super-method and pass the input', () => {
       let input = {};
       cli._theUnhappyEnd(input);
 
