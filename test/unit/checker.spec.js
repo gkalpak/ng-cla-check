@@ -181,7 +181,7 @@ describe('Checker', () => {
 
         return request;
       });
-      checker.check(12345).then(done);
+      checker.check(12345).then(done, done.fail);
     });
 
     it('should reject the returned promise if the `claLabel` is not present', (done) => {

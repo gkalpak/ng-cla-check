@@ -26,7 +26,7 @@ describe('index', () => {
           expect(response.stdout).toContain('@gkalpak/ng-cla-check');
           expect(response.stdout).toContain(config.versionInfo.version);
         }).
-        then(done);
+        then(done, done.fail);
     });
   });
 
@@ -38,7 +38,7 @@ describe('index', () => {
           expect(response.stderr).toBe('');
           expect(response.stdout).toContain(config.messages.usage);
         }).
-        then(done);
+        then(done, done.fail);
     });
   });
 
@@ -50,7 +50,7 @@ describe('index', () => {
           expect(response.stderr).toBe('');
           expect(response.stdout).toContain('WARNING: Unsupported argument (`instructions`).');
         }).
-        then(done);
+        then(done, done.fail);
     });
   });
 
@@ -65,11 +65,12 @@ describe('index', () => {
             expect(response.stderr).toContain('Make sure to include the username');
             expect(response.stderr).toContain(config.defaults.repo);
           }).
-          then(done);
+          then(done, done.fail);
       });
 
       it('should error if the CLA label is invalid', done => {
         let promises = ['--claLabel', '--claLabel='].map(claLabelArg => {
+          // eslint-disable-next-line jasmine/no-promise-without-done-fail
           return runWith(['12345', claLabelArg]).
             then(response => {
               expect(response.code).toBe(1);
@@ -80,7 +81,7 @@ describe('index', () => {
 
         Promise.
           all(promises).
-          then(done);
+          then(done, done.fail);
       });
 
       it('should error if no PR is specified (and display the usage instructions)', done => {
@@ -91,7 +92,7 @@ describe('index', () => {
             expect(response.stderr).toContain('ERROR: No PR specified');
             expect(response.stderr).toContain(config.messages.usage);
           }).
-          then(done);
+          then(done, done.fail);
       });
     });
 
@@ -136,7 +137,7 @@ describe('index', () => {
               it(description, done => {
                 runWith(args).
                   then(verify).
-                  then(done);
+                  then(done, done.fail);
               });
             });
           });

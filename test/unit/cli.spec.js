@@ -133,7 +133,7 @@ describe('Cli', () => {
       cli.
         run([]).
         then(value => expect(value).toBe('foo')).
-        then(done);
+        then(done, done.fail);
 
       superDeferred.resolve('foo');
     });
@@ -163,7 +163,7 @@ describe('Cli', () => {
         cli.
           run([]).
           then(() => expect(cli._checker).toEqual(jasmine.any(Checker))).
-          then(done);
+          then(done, done.fail);
       });
 
       it('should pass `claLabel` and `repo` to `Checker`', done => {
@@ -174,7 +174,7 @@ describe('Cli', () => {
           run([]).
           then(() => expect(cli._checker._options.claLabel).toBe('foo')).
           then(() => expect(cli._checker._options.repo).toBe('bar')).
-          then(done);
+          then(done, done.fail);
       });
 
       it('should call `check()` with `prNo` and return the returned value', done => {
@@ -184,7 +184,7 @@ describe('Cli', () => {
           run([]).
           then(value => expect(value).toBe('foo')).
           then(() => expect(checkSpy).toHaveBeenCalledWith(12345)).
-          then(done);
+          then(done, done.fail);
       });
     });
   });
