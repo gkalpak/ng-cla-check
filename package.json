@@ -10,7 +10,7 @@
   "scripts": {
     "lint": "eslint .",
     "prerelease": "npm test",
-    "release": "npm version",
+    "release": "gkcu-run \"npm version \\${*:patch}\"",
     "postrelease": "npm publish",
     "start": "node index",
     "pretest": "npm run lint",
@@ -34,6 +34,7 @@
     "@gkalpak/ng-maintain-utils": "~0.0.19"
   },
   "devDependencies": {
+    "@gkalpak/cli-utils": "0.0.1",
     "eslint": "^5.4.0",
     "eslint-plugin-jasmine": "^2.10.1",
     "jasmine": "^3.2.0"
