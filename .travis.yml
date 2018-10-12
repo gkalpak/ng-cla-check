@@ -1,7 +1,9 @@
 os:
   - linux
   - osx
-  - windows
+  # Secret environment variables not yet supported for Windows.
+  # See https://travis-ci.community/t/windows-instances-hanging-before-install/250.
+  # - windows
 
 dist: trusty
 sudo: false
