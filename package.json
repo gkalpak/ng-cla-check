@@ -34,7 +34,7 @@
     "@gkalpak/ng-maintain-utils": "0.0.20"
   },
   "devDependencies": {
-    "@gkalpak/cli-utils": "0.0.1",
+    "@gkalpak/cli-utils": "^0.1.6",
     "eslint": "^5.4.0",
     "eslint-plugin-jasmine": "^2.10.1",
     "jasmine": "^3.2.0"
