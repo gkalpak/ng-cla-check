@@ -31,7 +31,7 @@
     "url": "git+https://github.com/gkalpak/ng-cla-check.git"
   },
   "dependencies": {
-    "@gkalpak/ng-maintain-utils": "0.0.21"
+    "@gkalpak/ng-maintain-utils": "^0.1.0"
   },
   "devDependencies": {
     "@gkalpak/cli-utils": "^0.1.8",
