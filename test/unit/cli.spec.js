@@ -4,6 +4,7 @@
 let ngMaintainUtils = require('@gkalpak/ng-maintain-utils');
 
 let AbstractCli = ngMaintainUtils.AbstractCli;
+let Logger = ngMaintainUtils.Logger;
 
 // Imports - Local
 let Checker = require('../../lib/checker');
@@ -13,11 +14,12 @@ let Config = require('../../lib/config');
 // Tests
 describe('Cli', () => {
   let cli;
+  let logSpy;
 
   beforeEach(() => {
     cli = new Cli();
 
-    spyOn(console, 'log');
+    logSpy = spyOn(Logger.prototype, 'log');
   });
 
   describe('#constructor()', () => {
@@ -35,7 +37,7 @@ describe('Cli', () => {
       it('should do nothing', () => {
         cli[methodName]();
 
-        expect(console.log).not.toHaveBeenCalled();
+        expect(logSpy).not.toHaveBeenCalled();
       });
     });
   });
@@ -44,7 +46,7 @@ describe('Cli', () => {
     it('should display an "unsupported argument" warning', () => {
       cli._displayInstructions();
 
-      expect(console.log).toHaveBeenCalledWith('WARNING: Unsupported argument (`instructions`).');
+      expect(logSpy).toHaveBeenCalledWith('WARNING: Unsupported argument (`instructions`).');
     });
   });
 
@@ -54,10 +56,10 @@ describe('Cli', () => {
       cli._theHappyEnd(false);
       cli._theHappyEnd(true);
 
-      expect(console.log).toHaveBeenCalledTimes(3);
-      expect(console.log.calls.argsFor(0)[0]).toContain(':)');
-      expect(console.log.calls.argsFor(1)[0]).toContain(':)');
-      expect(console.log.calls.argsFor(2)[0]).toContain(':)');
+      expect(logSpy).toHaveBeenCalledTimes(3);
+      expect(logSpy.calls.argsFor(0)[0]).toContain(':)');
+      expect(logSpy.calls.argsFor(1)[0]).toContain(':)');
+      expect(logSpy.calls.argsFor(2)[0]).toContain(':)');
     });
 
     it('should return the input value', () => {
@@ -78,10 +80,10 @@ describe('Cli', () => {
       cli._theUnhappyEnd(false);
       cli._theUnhappyEnd(true);
 
-      expect(console.log).toHaveBeenCalledTimes(3);
-      expect(console.log.calls.argsFor(0)[0]).toContain(':(');
-      expect(console.log.calls.argsFor(1)[0]).toContain(':(');
-      expect(console.log.calls.argsFor(2)[0]).toContain(':(');
+      expect(logSpy).toHaveBeenCalledTimes(3);
+      expect(logSpy.calls.argsFor(0)[0]).toContain(':(');
+      expect(logSpy.calls.argsFor(1)[0]).toContain(':(');
+      expect(logSpy.calls.argsFor(2)[0]).toContain(':(');
     });
 
     it('should call its super-method and pass the input', () => {
