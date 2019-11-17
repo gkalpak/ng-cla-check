@@ -1,8 +1,11 @@
 'use strict';
 
 // Imports
+let ngMaintainUtils = require('@gkalpak/ng-maintain-utils');
 let https = require('https');
 let stream = require('stream');
+
+let Logger = ngMaintainUtils.Logger;
 
 // Imports - Local
 let Checker = require('../../lib/checker');
@@ -11,15 +14,14 @@ let Checker = require('../../lib/checker');
 describe('Checker', () => {
   let ghTokenVar = Checker.getGhTokenVar();
   let hadGhToken;
-  let mockLogger;
+  let warnSpy;
 
   beforeEach(() => {
     if (!(hadGhToken = process.env.hasOwnProperty(ghTokenVar))) {
       process.env[ghTokenVar] = 'foo';
     }
 
-    // `Checker` only uses the `warn()` method.
-    mockLogger = {warn: jasmine.createSpy('warn')};
+    warnSpy = spyOn(Logger.prototype, 'warn');
   });
 
   afterEach(() => {
@@ -35,20 +37,8 @@ describe('Checker', () => {
   });
 
   describe('#constructor()', () => {
-    it('should accept a `logger` argument', () => {
-      let checker = new Checker(mockLogger);
-
-      expect(checker._logger).toBe(mockLogger);
-    });
-
-    it('should fallback to `console` if no `logger` is specified', () => {
-      let checker = new Checker();
-
-      expect(checker._logger).toBe(console);
-    });
-
     it('should accept an `options` argument', () => {
-      let checker = new Checker(mockLogger, {
+      let checker = new Checker({
         ghToken: 'foo',
         claLabel: 'bar',
         repo: 'baz'
@@ -68,9 +58,9 @@ describe('Checker', () => {
     });
 
     it('should support passing a "partial" options object', () => {
-      let checker1 = new Checker(mockLogger, {ghToken: 'foo'});
-      let checker2 = new Checker(mockLogger, {claLabel: 'bar'});
-      let checker3 = new Checker(mockLogger, {repo: 'baz'});
+      let checker1 = new Checker({ghToken: 'foo'});
+      let checker2 = new Checker({claLabel: 'bar'});
+      let checker3 = new Checker({repo: 'baz'});
 
       expect(checker1._options.ghToken).toBe('foo');
       expect(checker1._options.claLabel).toEqual(jasmine.any(String));
@@ -86,8 +76,8 @@ describe('Checker', () => {
     });
 
     it('should support disabling the use of GitHub access-token (even if one exists)', () => {
-      let checker1 = new Checker(mockLogger, {ghToken: ''});
-      let checker2 = new Checker(mockLogger, {ghToken: false});
+      let checker1 = new Checker({ghToken: ''});
+      let checker2 = new Checker({ghToken: false});
 
       expect(checker1._options.ghToken).toBe(process.env[ghTokenVar]);
       expect(checker2._options.ghToken).not.toBe(process.env[ghTokenVar]);
@@ -96,16 +86,14 @@ describe('Checker', () => {
 
     it('should accept a `quiet` argument', () => {
       let checker1 = new Checker();
-      let checker2 = new Checker(mockLogger);
-      let checker3 = new Checker(mockLogger, null, 0);
-      let checker4 = new Checker(mockLogger, null, false);
-      let checker5 = new Checker(mockLogger, null, true);
+      let checker2 = new Checker(null, 0);
+      let checker3 = new Checker(null, false);
+      let checker4 = new Checker(null, true);
 
       expect(checker1._quiet).toBe(false);
       expect(checker2._quiet).toBe(false);
       expect(checker3._quiet).toBe(false);
-      expect(checker4._quiet).toBe(false);
-      expect(checker5._quiet).toBe(true);
+      expect(checker4._quiet).toBe(true);
     });
   });
 
@@ -117,7 +105,7 @@ describe('Checker', () => {
     beforeEach(() => {
       httpsGetSpy = spyOn(https, 'get').and.callFake(() => new PassThrough());
 
-      checker = new Checker(mockLogger, {
+      checker = new Checker({
         ghToken: 'foo',
         claLabel: 'bar',
         repo: 'baz'
@@ -172,10 +160,8 @@ describe('Checker', () => {
     });
 
     it('should not set the `Authorization` header if `ghToken` is false', () => {
-      spyOn(console, 'warn');
-
       let checker1 = checker;
-      let checker2 = new Checker(mockLogger, {ghToken: false});
+      let checker2 = new Checker({ghToken: false});
 
       checker1.check(12345);
       checker2.check(12345);
@@ -216,16 +202,16 @@ describe('Checker', () => {
     });
 
     it('should warn about a missing GitHub access-token, unless in `quiet` mode', () => {
-      let checker1 = new Checker(mockLogger, {ghToken: false}, false);
-      let checker2 = new Checker(mockLogger, {ghToken: false}, true);
+      let checker1 = new Checker({ghToken: false}, false);
+      let checker2 = new Checker({ghToken: false}, true);
 
-      expect(mockLogger.warn).not.toHaveBeenCalled();
+      expect(warnSpy).not.toHaveBeenCalled();
 
       checker1.check(12345);
-      expect(mockLogger.warn).toHaveBeenCalledTimes(1);
+      expect(warnSpy).toHaveBeenCalledTimes(1);
 
       checker2.check(12345);
-      expect(mockLogger.warn).toHaveBeenCalledTimes(1);
+      expect(warnSpy).toHaveBeenCalledTimes(1);
     });
   });
 });

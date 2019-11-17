@@ -50,22 +50,10 @@ checker.check(prNo).then(
     });
 ```
 
-You can also pass a custom logger instance (of type `ng-maintain-utils#Logger` - i.e. an object with
-`debug()`, `error()`, `info()`, `log()` and `warn()` methods - by default a thin wrapper around
-`console`):
-
-```js
-let checker = new Checker(console, {
-  ghToken: '...',   // Pass `false` to force anonymous (rate-limited) requests to the GitHub API.
-  claLabel: 'some text',
-  repo: 'some-user/some-repo'
-});
-```
-
 You can also pass custom `ghToken`, `claLabel` or `repo` options:
 
 ```js
-let checker = new Checker(null, {
+let checker = new Checker({
   ghToken: '...',   // Pass `false` to force anonymous (rate-limited) requests to the GitHub API.
   claLabel: 'some text',
   repo: 'some-user/some-repo'
@@ -80,7 +68,7 @@ GitHub access-token is available), by passing `true` as the second argument:
 
 ```js
 let quiet = true;
-let checker = new Checker(null, null, quiet);
+let checker = new Checker(null, quiet);
 ```
 
 ## Testing
