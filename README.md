@@ -94,5 +94,5 @@ The following test-types/modes are available:
   code-linting and e2e tests are omitted._
 
 
-[build-status]: https://travis-ci.org/gkalpak/ng-cla-check
-[build-status-image]: https://travis-ci.org/gkalpak/ng-cla-check.svg?branch=master
+[build-status]: https://github.com/gkalpak/ng-cla-check/actions/workflows/ci.yml
+[build-status-image]: https://github.com/gkalpak/ng-cla-check/actions/workflows/ci.yml/badge.svg?branch=master&event=push
