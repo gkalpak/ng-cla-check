@@ -1,6 +1,6 @@
 {
   "name": "@gkalpak/ng-cla-check",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A utility for checking if an (AngularJS-related) GitHub PR has a signed CLA (based on its labels).",
   "keywords": [
     "Utility",
